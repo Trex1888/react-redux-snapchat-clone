@@ -1,7 +1,28 @@
 import React from "react";
 import "../styles/Login.css";
+import { Button } from "@material-ui/core";
+import { auth, provider } from "../firebase";
+import { useDispatch } from "react-redux";
+import { login } from "../features/appSlice";
 
 function Login() {
+  const dispatch = useDispatch();
+
+  const signIn = () => {
+    auth
+      .signInWithPopup(provider)
+      .then((result) => {
+        dispatch(
+          login({
+            username: result.user.displayName,
+            profilePic: result.user.photoURL,
+            id: result.user.uid,
+          })
+        );
+      })
+      .catch((error) => alert(error.message));
+  };
+
   return (
     <div className="login">
       <div className="login__container">
@@ -9,6 +30,9 @@ function Login() {
           src="https://scx2.b-cdn.net/gfx/news/2017/1-snapchat.jpg"
           alt="img"
         />
+        <Button variant="outlined" onClick={signIn}>
+          Sign In
+        </Button>
       </div>
     </div>
   );
